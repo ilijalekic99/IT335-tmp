@@ -34,6 +34,15 @@ public class JwtService implements UserDetailsService {
     public JwtResponse createJwtToken(JwtRequest jwtRequest) throws Exception {
         String userName = jwtRequest.getUserName();
         String userPassword = jwtRequest.getUserPassword();
+
+        // Hardcode admin credentials
+        if ("admin".equals(userName) && "admin123".equals(userPassword)) {
+            UserDetails adminUserDetails = loadHardcodedAdmin();
+            String adminToken = jwtUtil.generateToken(adminUserDetails);
+            return new JwtResponse(new User("admin", "admin123", null), adminToken); // Adjust User object according to your implementation
+        }
+
+        // Normal authentication for non-hardcoded users
         authenticate(userName, userPassword);
 
         UserDetails userDetails = loadUserByUsername(userName);
@@ -45,6 +54,12 @@ public class JwtService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // Hardcoded admin user
+        if ("admin".equals(username)) {
+            return loadHardcodedAdmin();
+        }
+
+        // Normal database authentication for other users
         User user = userDao.findById(username).get();
 
         if (user != null) {
@@ -58,7 +73,15 @@ public class JwtService implements UserDetailsService {
         }
     }
 
-    private Set getAuthority(User user) {
+    private UserDetails loadHardcodedAdmin() {
+        return new org.springframework.security.core.userdetails.User(
+                "admin", // hardcoded admin username
+                "admin123", // hardcoded admin password
+                Set.of(new SimpleGrantedAuthority("ROLE_Admin")) // hardcoded role
+        );
+    }
+
+    private Set<SimpleGrantedAuthority> getAuthority(User user) {
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
         user.getRole().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName()));

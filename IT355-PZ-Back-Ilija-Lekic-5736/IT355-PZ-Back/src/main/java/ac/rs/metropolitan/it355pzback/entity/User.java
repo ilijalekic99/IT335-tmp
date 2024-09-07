@@ -9,9 +9,9 @@ public class User {
     @Id
     private String userName;
 
-    private  String userFirstName;
+    private String userFirstName;
 
-    private  String userLastName;
+    private String userLastName;
 
     private String userPassword;
 
@@ -24,9 +24,20 @@ public class User {
                     @JoinColumn(name = "ROLE_ID")
             }
     )
-
     private Set<Role> role;
 
+    // Podrazumevani (prazan) konstruktor - obavezno za JPA
+    public User() {
+    }
+
+    // Konstruktor sa parametrima
+    public User(String userName, String userPassword, Set<Role> role) {
+        this.userName = userName;
+        this.userPassword = userPassword;
+        this.role = role;
+    }
+
+    // Getteri i setteri
     public String getUserName() {
         return userName;
     }
