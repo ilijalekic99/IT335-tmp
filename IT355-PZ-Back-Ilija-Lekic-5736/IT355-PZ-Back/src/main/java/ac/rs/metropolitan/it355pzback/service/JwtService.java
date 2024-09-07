@@ -1,5 +1,6 @@
 package ac.rs.metropolitan.it355pzback.service;
 
+import ac.rs.metropolitan.it355pzback.entity.Role;
 import ac.rs.metropolitan.it355pzback.dao.UserDao;
 import ac.rs.metropolitan.it355pzback.entity.JwtRequest;
 import ac.rs.metropolitan.it355pzback.entity.JwtResponse;
@@ -39,7 +40,8 @@ public class JwtService implements UserDetailsService {
         if ("admin".equals(userName) && "admin123".equals(userPassword)) {
             UserDetails adminUserDetails = loadHardcodedAdmin();
             String adminToken = jwtUtil.generateToken(adminUserDetails);
-            return new JwtResponse(new User("admin", "admin123", null), adminToken); // Adjust User object according to your implementation
+            Set<Role> adminRoles = Set.of(new Role("Admin"));
+            return new JwtResponse(new User("admin", "admin123", adminRoles), adminToken);
         }
 
         // Normal authentication for non-hardcoded users

@@ -7,8 +7,23 @@ import javax.persistence.Id;
 public class Role {
 
     @Id
-    private  String roleName;
-    private  String roleDescription;
+    private String roleName;
+    private String roleDescription;
+
+    // Podrazumevani konstruktor
+    public Role() {
+    }
+
+    // Konstruktor sa oba parametra
+    public Role(String roleName, String roleDescription) {
+        this.roleName = roleName;
+        this.roleDescription = roleDescription;
+    }
+
+    // Novi konstruktor koji prihvata samo roleName
+    public Role(String roleName) {
+        this.roleName = roleName;
+    }
 
     public String getRoleName() {
         return roleName;
