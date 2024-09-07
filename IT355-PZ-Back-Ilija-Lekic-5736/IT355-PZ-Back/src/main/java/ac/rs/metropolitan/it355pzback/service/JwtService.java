@@ -44,6 +44,14 @@ public class JwtService implements UserDetailsService {
             return new JwtResponse(new User("admin", "admin123", adminRoles), adminToken);
         }
 
+        // Hardcode user credentials
+        if ("user".equals(userName) && "user123".equals(userPassword)) {
+            UserDetails normalUserDetails = loadHardcodedUser();
+            String userToken = jwtUtil.generateToken(normalUserDetails);
+            Set<Role> userRoles = Set.of(new Role("User"));
+            return new JwtResponse(new User("user", "user123", userRoles), userToken);
+        }
+
         // Normal authentication for non-hardcoded users
         authenticate(userName, userPassword);
 
@@ -59,6 +67,11 @@ public class JwtService implements UserDetailsService {
         // Hardcoded admin user
         if ("admin".equals(username)) {
             return loadHardcodedAdmin();
+        }
+
+        // Hardcoded user
+        if ("user".equals(username)) {
+            return loadHardcodedUser();
         }
 
         // Normal database authentication for other users
@@ -80,6 +93,14 @@ public class JwtService implements UserDetailsService {
                 "admin", // hardcoded admin username
                 "admin123", // hardcoded admin password
                 Set.of(new SimpleGrantedAuthority("ROLE_Admin")) // hardcoded role
+        );
+    }
+
+    private UserDetails loadHardcodedUser() {
+        return new org.springframework.security.core.userdetails.User(
+                "user", // hardcoded user username
+                "user123", // hardcoded user password
+                Set.of(new SimpleGrantedAuthority("ROLE_User")) // hardcoded role
         );
     }
 
